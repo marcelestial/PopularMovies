@@ -13,9 +13,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-/**
- * Created by mal on 7/5/2016.
- */
+
 public class MovieAdapter extends ArrayAdapter{
 
     private Context context;
@@ -27,7 +25,6 @@ public class MovieAdapter extends ArrayAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
-        Log.d("AAAA", "GETVIEW");
         Movie movie = (Movie) getItem(position);
 
         if (convertView == null) {
