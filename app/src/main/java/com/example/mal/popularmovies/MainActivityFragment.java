@@ -1,5 +1,6 @@
 package com.example.mal.popularmovies;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -7,7 +8,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +32,7 @@ public class MainActivityFragment extends Fragment {
 
     private MovieAdapter movieAdapter;
 
-    Movie[] movies = {new Movie("https://image.tmdb.org/t/p/w325/mAx7F1uq3eZLIgFduDan26CYsSA.jpg")};
+    ArrayList<Movie> movies = new ArrayList<>();
 
     public MainActivityFragment() {}
 
@@ -38,10 +41,22 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        movieAdapter = new MovieAdapter(getActivity(), Arrays.asList(movies));
+        FetchMovieTask movieTask = new FetchMovieTask();
+        movieTask.execute();
+
+        movieAdapter = new MovieAdapter(getActivity(), movies);
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_flavor);
         gridView.setAdapter(movieAdapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                String activityString = ((Movie)movieAdapter.getItem(position)).posterpath;
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, activityString);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
@@ -72,15 +87,9 @@ public class MainActivityFragment extends Fragment {
             }
             return newThumbids;
 
-
         }
 
-
         protected ArrayList<Movie> doInBackground(String... params) {
-            if (params.length == 0) {
-                return null;
-            }
-
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
@@ -120,6 +129,7 @@ public class MainActivityFragment extends Fragment {
                     movieJsonStr = null;
                 }
                 movieJsonStr = buffer.toString();
+
             } catch (IOException e) {
                 Log.e("MainActivityFragment", "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attempting
@@ -145,6 +155,14 @@ public class MainActivityFragment extends Fragment {
             }
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Movie> movies) {
+            movieAdapter.clear();
+            for(Movie movie : movies){
+                movieAdapter.add(movie);
+            }
         }
     }
 }
