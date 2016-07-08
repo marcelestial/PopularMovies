@@ -51,9 +51,13 @@ public class MainActivityFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                String activityString = ((Movie)movieAdapter.getItem(position)).posterpath;
+                Movie detailMovie = (Movie)movieAdapter.getItem(position);
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, activityString);
+                        .putExtra("movieTitle", detailMovie.title)
+                        .putExtra("moviePosterPath", detailMovie.posterpath)
+                        .putExtra("movieOverview", detailMovie.overview)
+                        .putExtra("movieVoteAvg", detailMovie.voteAvg)
+                        .putExtra("movieDate", detailMovie.date);
                 startActivity(intent);
             }
         });
@@ -69,7 +73,11 @@ public class MainActivityFragment extends Fragment {
                 throws JSONException {
 
             final String RESULTS = "results";
+            final String TITLE = "original_title";
             final String POSTER = "poster_path";
+            final String OVERVIEW = "overview";
+            final String VOTES = "vote_average";
+            final String RELEASE = "release_date";
 
             ArrayList<Movie> newThumbids = new ArrayList<>();
 
@@ -80,7 +88,11 @@ public class MainActivityFragment extends Fragment {
                 JSONObject results = movieArray.getJSONObject(i);
 
                 String posterPath = "http://image.tmdb.org/t/p/w185" + results.getString(POSTER);
-                Movie outputAttr = new Movie(posterPath);
+                String title = results.getString(TITLE);
+                String overview = results.getString(OVERVIEW);
+                String date = results.getString(RELEASE);
+                String voteAvg = results.getString(VOTES);
+                Movie outputAttr = new Movie(posterPath, title, overview, date, voteAvg);
 
                 newThumbids.add(outputAttr);
 
