@@ -87,11 +87,11 @@ public class MainActivityFragment extends Fragment {
             for (int i = 0; i < movieArray.length(); i++) {
                 JSONObject results = movieArray.getJSONObject(i);
 
-                String posterPath = "http://image.tmdb.org/t/p/w185" + results.getString(POSTER);
+                String posterPath = "http://image.tmdb.org/t/p/w342" + results.getString(POSTER);
                 String title = results.getString(TITLE);
                 String overview = results.getString(OVERVIEW);
-                String date = results.getString(RELEASE);
-                String voteAvg = results.getString(VOTES);
+                String date = results.getString(RELEASE).substring(0, 4);
+                String voteAvg = results.getString(VOTES) + " / 10";
                 Movie outputAttr = new Movie(posterPath, title, overview, date, voteAvg);
 
                 newThumbids.add(outputAttr);
