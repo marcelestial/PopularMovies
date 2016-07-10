@@ -9,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -41,13 +43,24 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+
+        Spinner sortSpinner = (Spinner) rootView.findViewById(R.id.sort_spinner);
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.sorts_array, R.layout.support_simple_spinner_dropdown_item);
+        arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        sortSpinner.setAdapter(arrayAdapter);
+
+
         FetchMovieTask movieTask = new FetchMovieTask();
         movieTask.execute();
+
 
         movieAdapter = new MovieAdapter(getActivity(), movies);
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_flavor);
         gridView.setAdapter(movieAdapter);
+
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
