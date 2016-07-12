@@ -7,6 +7,8 @@
     tools:showIn="@layout/activity_main">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:background="#C62828"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="right"
@@ -14,6 +16,7 @@
 
         <Spinner
             android:id="@+id/sort_spinner"
+            android:popupBackground="#FFFFFF"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -21,10 +24,14 @@
 
 
     <GridView
+        android:layout_below="@+id/appbar"
         android:id="@+id/gridview_flavor"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:numColumns="2"
-        android:gravity="center"/>
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="auto_fit"
+        android:gravity="center"
+        android:horizontalSpacing="0dp"
+        android:verticalSpacing="0dp"
+        android:stretchMode="columnWidth"/>
 
 </RelativeLayout>

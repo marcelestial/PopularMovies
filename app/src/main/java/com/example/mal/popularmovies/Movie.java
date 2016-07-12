@@ -1,7 +1,7 @@
 package com.example.mal.popularmovies;
 
 
-public class Movie {
+public class Movie{
     String posterpath, title, overview, date, voteAvg;
 
     public Movie(String posterpath, String title, String overview, String date, String voteAvg){
@@ -11,4 +11,5 @@ public class Movie {
         this.date = date;
         this.voteAvg = voteAvg;
     }
+
 }

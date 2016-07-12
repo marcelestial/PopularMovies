@@ -1,6 +1,7 @@
 package com.example.mal.popularmovies;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -23,14 +25,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * A fragment containing the grid view
+ * A fragment containing the grid view and spinner toolbar
  */
 public class MainActivityFragment extends Fragment {
+
+    private int sortStyle;
+
+    private String urlString;
 
     private MovieAdapter movieAdapter;
 
@@ -41,8 +48,7 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
+        final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         Spinner sortSpinner = (Spinner) rootView.findViewById(R.id.sort_spinner);
         ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getActivity(),
@@ -50,6 +56,30 @@ public class MainActivityFragment extends Fragment {
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         sortSpinner.setAdapter(arrayAdapter);
 
+        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
+                sortStyle = pos;
+                populateGrid(rootView, sortStyle);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent){
+                //HEY YOU WHY IS THIS HERE
+                urlString = getString(R.string.popsort_url) + getString(R.string.api_key);
+            }
+        });
+
+        populateGrid(rootView, sortStyle);
+
+        return rootView;
+    }
+
+    public void populateGrid(View rootView, int sortStyle){
+        if (sortStyle == 0) {
+            urlString = getString(R.string.popsort_url) + getString(R.string.api_key);
+        } else if (sortStyle == 1) {
+            urlString = getString(R.string.votesort_url) + getString(R.string.api_key);
+        }
 
         FetchMovieTask movieTask = new FetchMovieTask();
         movieTask.execute();
@@ -74,8 +104,6 @@ public class MainActivityFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-        return rootView;
     }
 
     public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>>{
@@ -125,7 +153,7 @@ public class MainActivityFragment extends Fragment {
 
             try {
                 // Construct the URL for the TMDB query
-                URL url = new URL("http://api.themoviedb.org/3/movie/popular?api_key=473109b3964f3fc35d5cf0caa9941f46");
+                URL url = new URL(urlString);
 
                 // Create the request to TMDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -157,7 +185,7 @@ public class MainActivityFragment extends Fragment {
 
             } catch (IOException e) {
                 Log.e("MainActivityFragment", "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attempting
+                // If the code didn't successfully get the movie data, there's no point in attempting
                 // to parse it.
                 movieJsonStr = null;
             } finally {
