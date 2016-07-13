@@ -1,7 +1,9 @@
 package com.example.mal.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -13,7 +15,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -25,18 +26,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * A fragment containing the grid view and spinner toolbar
  */
 public class MainActivityFragment extends Fragment {
 
+    //an integer representing the default or currently selected sortspinner item
     private int sortStyle;
 
+    //the string for the url to be requested
     private String urlString;
 
     private MovieAdapter movieAdapter;
@@ -48,12 +49,16 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        //create the spinner and arrayadapter for the spinner items
         Spinner sortSpinner = (Spinner) rootView.findViewById(R.id.sort_spinner);
+
         ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.sorts_array, R.layout.support_simple_spinner_dropdown_item);
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+
         sortSpinner.setAdapter(arrayAdapter);
 
         sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
@@ -64,33 +69,35 @@ public class MainActivityFragment extends Fragment {
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent){
-                //HEY YOU WHY IS THIS HERE
                 urlString = getString(R.string.popsort_url) + getString(R.string.api_key);
             }
         });
 
-        populateGrid(rootView, sortStyle);
+            populateGrid(rootView, sortStyle);
 
         return rootView;
     }
 
     public void populateGrid(View rootView, int sortStyle){
+        //construct the URL string based on default or selected sort style
         if (sortStyle == 0) {
             urlString = getString(R.string.popsort_url) + getString(R.string.api_key);
         } else if (sortStyle == 1) {
             urlString = getString(R.string.votesort_url) + getString(R.string.api_key);
         }
 
+        //create and execute a new FetchMovieTask
         FetchMovieTask movieTask = new FetchMovieTask();
         movieTask.execute();
 
-
+        //create and set a MovieAdapter for the gridView
         movieAdapter = new MovieAdapter(getActivity(), movies);
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_flavor);
         gridView.setAdapter(movieAdapter);
 
 
+        //images in the gridview are clickable and open a new activity displaying information for the movie they represent
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -143,8 +150,7 @@ public class MainActivityFragment extends Fragment {
         }
 
         protected ArrayList<Movie> doInBackground(String... params) {
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
+
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
@@ -187,7 +193,7 @@ public class MainActivityFragment extends Fragment {
                 Log.e("MainActivityFragment", "Error ", e);
                 // If the code didn't successfully get the movie data, there's no point in attempting
                 // to parse it.
-                movieJsonStr = null;
+                return null;
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -213,8 +219,15 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
             movieAdapter.clear();
-            for(Movie movie : movies){
-                movieAdapter.add(movie);
+            if(movies != null) {
+                for (Movie movie : movies) {
+                    movieAdapter.add(movie);
+                }
+            }
+            else{
+                Toast errorToast = Toast.makeText(getContext(),
+                        "Unable to retrieve movies data. Please check your network connection.", Toast.LENGTH_LONG);
+                errorToast.show();
             }
         }
     }

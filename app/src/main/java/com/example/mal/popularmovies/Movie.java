@@ -1,6 +1,5 @@
 package com.example.mal.popularmovies;
 
-
 public class Movie{
     String posterpath, title, overview, date, voteAvg;
 
