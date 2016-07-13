@@ -11,8 +11,7 @@
         android:background="#C62828"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:gravity="right">
 
         <Spinner
             android:id="@+id/sort_spinner"
