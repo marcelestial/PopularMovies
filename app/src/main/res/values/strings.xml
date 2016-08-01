@@ -2,12 +2,14 @@
     <string name="app_name">PopularMovies</string>
     <string name="action_settings">Settings</string>
 
-    <string name="popsort_url">http://api.themoviedb.org/3/movie/popular?</string>
-    <string name="votesort_url">http://api.themoviedb.org/3/movie/top_rated?</string>
-    <string name="api_key">api_key=((API KEY HERE))</string>
+    <string name="popsort">http://api.themoviedb.org/3/movie/popular?</string>
+    <string name="ratesort">http://api.themoviedb.org/3/movie/top_rated?</string>
+    <string name="favsort">favorites</string>
+    <string name="api_key">api_key=473109b3964f3fc35d5cf0caa9941f46</string>
 
     <string-array name="sorts_array">
         <item>Most Popular</item>
         <item>Highest Rated</item>
+        <item>Favorites</item>
     </string-array>
 </resources>

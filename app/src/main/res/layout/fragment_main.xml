@@ -24,7 +24,7 @@
 
     <GridView
         android:layout_below="@+id/appbar"
-        android:id="@+id/gridview_flavor"
+        android:id="@+id/gridview"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:numColumns="auto_fit"
