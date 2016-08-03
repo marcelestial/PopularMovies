@@ -1,7 +1,6 @@
 package com.example.mal.popularmovies;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -51,10 +50,13 @@ public class MainActivityFragment extends Fragment {
         movies = new ArrayList<>();
 
         if(savedInstanceState != null){
+            Log.d("AAAAONCREATE", "savedInstanceState != null");
             sortStyle = savedInstanceState.getString("SORT_STYLE");
+            movies = savedInstanceState.getParcelableArrayList("MOVIES_LIST");
             refill = false;
         }
         else{
+            Log.d("AAAAONCREATE", "savedInstanceState = null");
             sortStyle = getString(R.string.popsort);
             refill = true;
         }
@@ -127,6 +129,9 @@ public class MainActivityFragment extends Fragment {
     public void onStart(){
         super.onStart();
 
+        //EDREHASIVAR
+        Log.d("AAAA", "refill: " + refill);
+
         if(refill || sortStyle == getString(R.string.favsort)){
             populateMovies(sortStyle);
         }
@@ -134,6 +139,7 @@ public class MainActivityFragment extends Fragment {
 
     public void onSaveInstanceState(Bundle savedInstanceState){
         savedInstanceState.putString("SORT_STYLE", sortStyle);
+        savedInstanceState.putParcelableArrayList("MOVIES_LIST", movies);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -207,7 +213,6 @@ public class MainActivityFragment extends Fragment {
         }
 
         protected ArrayList<Movie> doInBackground(String... params){
-            Log.d("AAAA", "Getting more images...");
 
             if (params.length == 0){
                 return null;
