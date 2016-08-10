@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -60,15 +61,17 @@ public class MainActivityFragment extends Fragment {
             sortStyle = getString(R.string.popsort);
             refill = true;
         }
-
-        setHasOptionsMenu(true);
     }
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-        inflater.inflate(R.menu.menu_main, menu);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+    }
 
-        MenuItem menuItem = menu.findItem(R.id.sort_spinner);
-        Spinner sortSpinner = (Spinner) MenuItemCompat.getActionView(menuItem);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        View v = inflater.inflate(R.layout.fragment_main, container, false);
+
+        //create the spinner and arrayadapter for the spinner items
+        Spinner sortSpinner = (Spinner) v.findViewById(R.id.sort_spinner);
 
         ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.sorts_array, R.layout.support_simple_spinner_dropdown_item);
@@ -80,7 +83,7 @@ public class MainActivityFragment extends Fragment {
         if (sortStyle.equals(getString(R.string.ratesort))){
             selectedItem = 1;
         }
-        if (sortStyle.equals(getString(R.string.favsort))){
+        else if (sortStyle.equals(getString(R.string.favsort))){
             selectedItem = 2;
         }
         else{
@@ -109,20 +112,12 @@ public class MainActivityFragment extends Fragment {
                     gridView.setSelection(0);
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
-    }
-
-    public void onActivityCreated(@Nullable Bundle savedInstanceState){
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View v = inflater.inflate(R.layout.fragment_main, container, false);
         return v;
     }
 
@@ -130,11 +125,11 @@ public class MainActivityFragment extends Fragment {
         super.onStart();
 
         //EDREHASIVAR
-        Log.d("AAAA", "refill: " + refill);
+        /*Log.d("AAAA", "refill: " + refill);
 
         if(refill || sortStyle == getString(R.string.favsort)){
             populateMovies(sortStyle);
-        }
+        }*/
     }
 
     public void onSaveInstanceState(Bundle savedInstanceState){
@@ -148,6 +143,8 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void populateMovies(String sortStyle){
+        Log.d("AAAA", "populateMovies: " + sortStyle);
+
         ConnectivityManager manager = (ConnectivityManager)
                 getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
