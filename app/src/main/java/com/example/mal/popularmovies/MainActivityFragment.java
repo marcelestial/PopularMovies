@@ -39,7 +39,7 @@ import java.util.ArrayList;
  */
 public class MainActivityFragment extends Fragment {
 
-    public ArrayList<Movie> movies;
+    public static ArrayList<Movie> movies;
     boolean refill = true;
     String sortStyle;
     private MovieAdapter movieAdapter;
@@ -48,16 +48,16 @@ public class MainActivityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        movies = new ArrayList<>();
+        if(movies == null) {
+            movies = new ArrayList<>();
+        }
 
         if(savedInstanceState != null){
-            Log.d("AAAAONCREATE", "savedInstanceState != null");
             sortStyle = savedInstanceState.getString("SORT_STYLE");
             movies = savedInstanceState.getParcelableArrayList("MOVIES_LIST");
             refill = false;
         }
         else{
-            Log.d("AAAAONCREATE", "savedInstanceState = null");
             sortStyle = getString(R.string.popsort);
             refill = true;
         }
@@ -107,10 +107,9 @@ public class MainActivityFragment extends Fragment {
 
                 populateMovies(sortStyle);
 
-                //EDREHASIVAR
-                if(gridView != null){
+                /*if(gridView != null){
                     gridView.setSelection(0);
-                }
+                }*/
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -123,13 +122,6 @@ public class MainActivityFragment extends Fragment {
 
     public void onStart(){
         super.onStart();
-
-        //EDREHASIVAR
-        /*Log.d("AAAA", "refill: " + refill);
-
-        if(refill || sortStyle == getString(R.string.favsort)){
-            populateMovies(sortStyle);
-        }*/
     }
 
     public void onSaveInstanceState(Bundle savedInstanceState){
@@ -143,7 +135,6 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void populateMovies(String sortStyle){
-        Log.d("AAAA", "populateMovies: " + sortStyle);
 
         ConnectivityManager manager = (ConnectivityManager)
                 getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -250,7 +241,6 @@ public class MainActivityFragment extends Fragment {
                     }
 
                     if (buffer.length() == 0) {
-                        Log.d("AAAA", "buffer length is 0");
                         // Stream was empty.  No point in parsing.
                         return null;
                     }
@@ -290,20 +280,19 @@ public class MainActivityFragment extends Fragment {
 
                 movies = (ArrayList<Movie>) result.clone();
 
-                if (gridView == null) {
-                    gridView = (GridView) getActivity().findViewById(R.id.gridview);
+                gridView = (GridView) getActivity().findViewById(R.id.gridview);
 
-                    movieAdapter = new MovieAdapter(getActivity(), movies);
-                    gridView.setAdapter(movieAdapter);
+                movieAdapter = new MovieAdapter(getActivity(), movies);
+                gridView.setAdapter(movieAdapter);
 
-                    gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        public void onItemClick(AdapterView<?> parent, View v,
-                                                int position, long id) {
+                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView<?> parent, View v,
+                                            int position, long id) {
 
-                            ((Callback) getActivity()).onItemSelected(movies, position);
-                        }
-                    });
-                }
+                        ((Callback) getActivity()).onItemSelected(movies, position);
+                    }
+                });
+
                 movieAdapter.notifyDataSetChanged();
             }
         }
