@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
         startActivity(intent);
     }
-    //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
